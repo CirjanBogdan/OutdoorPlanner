@@ -36,6 +36,7 @@ namespace OutdoorPlanner.Controllers
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("filterByCategory")))
                 filterByCategory = HttpContext.Session.GetString("filterByCategory");
 
+            // GET FORCAST 
             var forecastResult = await _eventService.GetForcast();
             if (!forecastResult)
                 TempData["ErrorMessage"] = "Error getting weather from OpenWeather.";
