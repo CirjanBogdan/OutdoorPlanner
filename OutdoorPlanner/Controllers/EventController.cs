@@ -41,7 +41,7 @@ namespace OutdoorPlanner.Controllers
             if (!forecastResult)
                 TempData["ErrorMessage"] = "Error getting weather from OpenWeather.";
 
-            var pageSize = 3;
+            var pageSize = 4;
             var events = await _eventService.GetUpcomingEvents(filterByCategory);
 
             TempData["FilterByCategory"] = filterByCategory;

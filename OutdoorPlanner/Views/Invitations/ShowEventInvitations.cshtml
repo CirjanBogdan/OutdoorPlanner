@@ -39,9 +39,7 @@
                 <td>@item.UserEmail</td>
                 <td>@item.Status</td>
                 <td>
-                    <a class="btn btn-info btn-sm" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                    <a class="btn btn-primary btn-sm" asp-action="Details" asp-route-id="@item.Id">Details</a>
-                    <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a class="btn btn-danger btn-sm" asp-action="DeleteInvitation" asp-route-invitationId="@item.Id">Delete</a>
                 </td>
             </tr>
         }

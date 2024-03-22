@@ -75,5 +75,38 @@ namespace OutdoorPlanner.Controllers
             return RedirectToAction("ShowEventInvitations", new { eventId = model.EventId });
         }
 
+        public async Task<IActionResult> GetInvitationsLoggedUser()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            ICollection<InvitationViewModel> invitations = await _userService.GetUserInvitations(user.Id);
+            return View(invitations);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateInvitationUser(int invitationId, string status)
+        {
+            var result = await _userService.UpdateUserInvitation(invitationId, status);
+            return RedirectToAction("GetInvitationsLoggedUser");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DeleteInvitation(int invitationId)
+        {
+            var invitation = await _invitationsService.GetInvitationById(invitationId);
+            return View(invitation);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteInvitationById(int eventId, int invitationId)
+        {
+            var deleteInvitation = await _invitationsService.DeleteInvitationById(invitationId);
+
+            if (!deleteInvitation)
+                TempData["ErrorMessage"] = "The invitation has not deleted.";
+            else
+                TempData["SuccessMessage"] = "The invitation was successfuly deleted.";
+
+            return RedirectToAction("ShowEventInvitations", new { eventId });
+        }
     }
 }

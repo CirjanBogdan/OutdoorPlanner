@@ -1,0 +1,49 @@
+﻿@using OutdoorPlanner.Models.Enum
+@model IEnumerable<OutdoorPlanner.ViewModels.InvitationViewModel>
+
+@{
+    ViewData["Title"] = "GetInvitationsLoggedUser";
+}
+
+<h1>Invitations</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.EventName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <form asp-action="UpdateInvitationUser">
+
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EventName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+
+                <td>
+                    <input type="hidden" name="eventId" value="@item.EventId" />
+                    <input type="hidden" name="invitationId" value="@item.InvitationId" />
+                    <input type="submit" value="Accept" name="Status" class="btn btn-primary" />
+                    <input type="submit" value="Decline" name="Status" class="btn btn-danger" />
+                </td>
+                    
+            </tr>
+        </form>
+        }
+    </tbody>
+</table>
+
+

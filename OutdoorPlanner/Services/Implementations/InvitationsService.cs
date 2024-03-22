@@ -23,8 +23,6 @@ namespace OutdoorPlanner.Services.Implementations
             _userManager = userManager;
         }
 
-
-
         public async Task<InvitationsEventViewModel> GetInvitationsByEventId(int eventId)
         {
             var @event = await _eventService.GetEventById(eventId);
@@ -69,6 +67,28 @@ namespace OutdoorPlanner.Services.Implementations
         {
             bool checkInvitation = await _context.Invitations.AnyAsync(e => e.EventId == eventId && e.UserEmail == email);
             return checkInvitation;
+        }
+
+        public async Task<InvitationViewModel> GetInvitationById(int invitationId)
+        {
+            var invitation = await _context.Invitations.FirstOrDefaultAsync(i => i.Id == invitationId);
+            var result = _mapper.Map<InvitationViewModel>(invitation);
+            return result;
+        }
+
+        public async Task<bool> DeleteInvitationById(int invitationId)
+        {
+            try
+            {
+                var invitation = await _context.Invitations.Where(i => i.Id == invitationId).FirstOrDefaultAsync();
+                _context.Invitations.Remove(invitation);
+                await _context.SaveChangesAsync();
+                return true;
+            } catch (Exception)
+            {
+                return false;
+            }
+            
         }
     }
 }
