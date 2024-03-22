@@ -1,0 +1,49 @@
+﻿@model InvitationsEventViewModel
+
+@{
+    ViewData["Title"] = "Show Event Invitations";
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<h3>Event Name: @Model.EventViewModel.Name</h3>
+<h3>Creator Username: @Model.EventViewModel.UserName</h3>
+
+<div class="mt-3">
+    <a class="btn btn-primary" asp-action="CreateInvitation" asp-route-eventId="@Model.EventViewModel.Id">Create Invitation</a>
+</div>
+
+<table class="table mt-3">
+    <thead class="thead-dark">
+        <tr>
+            <th>User Email</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.InvitationListViewModel)
+        {
+            <tr>
+                <td>@item.UserEmail</td>
+                <td>@item.Status</td>
+                <td>
+                    <a class="btn btn-info btn-sm" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                    <a class="btn btn-primary btn-sm" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

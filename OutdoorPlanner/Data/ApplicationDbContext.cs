@@ -13,10 +13,31 @@ namespace OutdoorPlanner.Data
         }
 
         public DbSet<Event> Events { get; set; }
+        public DbSet<Invitation> Invitations { get; set; }
+        public DbSet<UserInvitation> UserInvitations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // one to many Event -> Invitations
+            modelBuilder.Entity<Invitation>()
+                .HasOne(invitation => invitation.Event)
+                .WithMany(invitations => invitations.Invitations)
+                .HasForeignKey(invitation => invitation.EventId);
+
+            // many to many User -> Invitations
+
+            modelBuilder.Entity<UserInvitation>()
+                .HasKey(ui => new { ui.UserId, ui.InvitationId });
+            modelBuilder.Entity<UserInvitation>()
+                .HasOne(bc => bc.User)
+                .WithMany(b => b.UserInvitations)
+                .HasForeignKey(bc => bc.UserId);
+            modelBuilder.Entity<UserInvitation>()
+                .HasOne(bc => bc.Invitation)
+                .WithMany(c => c.UserInvitation)
+                .HasForeignKey(bc => bc.InvitationId);
 
             modelBuilder.Entity<Event>().HasData(
                 new Event()
@@ -92,6 +113,8 @@ namespace OutdoorPlanner.Data
                     Category = Models.Enum.Category.Concerts
                 });
         }
-        public DbSet<OutdoorPlanner.ViewModels.EventViewModel> EventViewModel { get; set; } = default!;
+        public DbSet<EventViewModel> EventViewModel { get; set; } = default!;
+        public DbSet<InvitationViewModel> InvitationViewModel { get; set; } = default!;
+        public DbSet<CreateInvitationBindingModel> CreateInvitationBindingModel { get; set; } = default!;
     }
 }

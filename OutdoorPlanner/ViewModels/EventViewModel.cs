@@ -1,4 +1,5 @@
-﻿using OutdoorPlanner.Models.Enum;
+﻿using OutdoorPlanner.Models;
+using OutdoorPlanner.Models.Enum;
 using OutdoorPlanner.Models.Enum;
 
 namespace OutdoorPlanner.ViewModels
@@ -15,5 +16,8 @@ namespace OutdoorPlanner.ViewModels
         public bool Rain { get; set; }
         public bool Forcasted { get; set; }
         public int CloudsValue { get; set; }
+        public ICollection<Invitation> Invitations { get; set; }
+        public string? UserId { get; set; }
+        public string? UserName { get; set; }
     }
 }

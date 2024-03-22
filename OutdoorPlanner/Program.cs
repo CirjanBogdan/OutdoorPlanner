@@ -1,9 +1,9 @@
 using OutdoorPlanner.Data;
 using OutdoorPlanner.Models;
 using OutdoorPlanner.Services.Contracts;
-using OutdoorPlanner.Services.Implementations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using OutdoorPlanner.Services.Implementations;
 
 namespace OutdoorPlanner
 {
@@ -29,6 +29,8 @@ namespace OutdoorPlanner
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddScoped<IEventService, EventService>();
+            builder.Services.AddScoped<IInvitationsService, InvitationsService>();
+            builder.Services.AddScoped<IUserService, UserService>();
 
             builder.Services.AddSession();
 

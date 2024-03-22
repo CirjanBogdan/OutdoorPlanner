@@ -3,10 +3,10 @@ using OutdoorPlanner.Data;
 using OutdoorPlanner.Models;
 using OutdoorPlanner.Models.Enum;
 using OutdoorPlanner.Services.Contracts;
-using OutdoorPlanner.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using OutdoorPlanner.ViewModels;
 
 namespace OutdoorPlanner.Services.Implementations
 {
@@ -22,7 +22,7 @@ namespace OutdoorPlanner.Services.Implementations
 
         public async Task<List<EventViewModel>> GetUpcomingEvents(string filterByCategory)
         {
-            Enum.TryParse<Category>(filterByCategory, out Category enumCategory);
+            Enum.TryParse(filterByCategory, out Category enumCategory);
             DateTime currentDate = DateTime.Now;
             var upcomingEvents = await _context.Events.Where(c => (filterByCategory == null || c.Category == enumCategory) && c.Date > currentDate)
                                                       .OrderBy(d => d.Date)
@@ -51,10 +51,11 @@ namespace OutdoorPlanner.Services.Implementations
 
                 _context.Events.Add(newEvent);
                 _context.Users.Update(user);
-                
+
                 await _context.SaveChangesAsync();
                 return true;
-            } catch
+            }
+            catch
             {
                 return false;
             }
@@ -68,11 +69,12 @@ namespace OutdoorPlanner.Services.Implementations
                 _context.Events.Remove(@event);
                 await _context.SaveChangesAsync();
                 return true;
-            } catch
+            }
+            catch
             {
                 return false;
             }
-        }        
+        }
 
         public async Task<Event> GetEventById(int id)
         {
@@ -100,7 +102,7 @@ namespace OutdoorPlanner.Services.Implementations
         {
             var currentDate = DateTime.Now;
             // Get upcoming events and sort them
-            var upcomingEvents = await _context.Events.Where(e => e.Date > currentDate).Where(e => e.Forcasted == false) 
+            var upcomingEvents = await _context.Events.Where(e => e.Date > currentDate).Where(e => e.Forcasted == false)
                                                       .Where(e => e.Date < currentDate.AddDays(4))
                                                       .OrderBy(d => d.Date).ToListAsync();
             foreach (var @event in upcomingEvents)
@@ -142,6 +144,6 @@ namespace OutdoorPlanner.Services.Implementations
                 }
             }
             return true;
-        }        
+        }
     }
 }

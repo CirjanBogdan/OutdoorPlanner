@@ -20,9 +20,11 @@ namespace OutdoorPlanner.Models
 
         public bool Rain { get; set; } = false;
         public bool Forcasted { get; set; } = false;
-        public int CloudsValue { get; set; }
+        public int? CloudsValue { get; set; }
 
         public string? UserId { get; set; }
         public ApplicationUser? User { get; set; }
+
+        public ICollection<Invitation>? Invitations { get; set; }
     }
 }

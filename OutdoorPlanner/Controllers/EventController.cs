@@ -2,10 +2,10 @@
 using OutdoorPlanner.Data;
 using OutdoorPlanner.Models;
 using OutdoorPlanner.Services.Contracts;
-using OutdoorPlanner.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using OutdoorPlanner.ViewModels;
 
 namespace OutdoorPlanner.Controllers
 {
@@ -14,16 +14,20 @@ namespace OutdoorPlanner.Controllers
         private readonly IEventService _eventService;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ApplicationDbContext _context;
 
-        public EventController(IEventService eventService, IMapper mapper, UserManager<ApplicationUser> userManager)
+        public EventController(IEventService eventService, IMapper mapper, UserManager<ApplicationUser> userManager, ApplicationDbContext context)
         {
             _userManager = userManager;
+            _context = context;
             _mapper = mapper;
             _eventService = eventService;
         }
 
+
         public async Task<IActionResult> All(int? pageNumber, string filterByCategory)
         {
+            
             if (filterByCategory != null)
                 HttpContext.Session.SetString("filterByCategory", filterByCategory);
             else if (pageNumber is null)
@@ -52,13 +56,13 @@ namespace OutdoorPlanner.Controllers
 
         [HttpGet]
         [Authorize]
-        public IActionResult Create()
+        public IActionResult CreateEvent()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateEventBindingModel model)
+        public async Task<IActionResult> CreateEvent(CreateEventBindingModel model)
         {
             if (ModelState.IsValid)
             {
@@ -77,8 +81,12 @@ namespace OutdoorPlanner.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var @event = await _eventService.GetEventById(id);
-            var result = _mapper.Map<EventViewModel>(@event);
-
+            var invitations = _context.Invitations.Where(e => e.EventId == id).ToList();
+            var result = new InvitationsEventViewModel
+            {
+                EventViewModel = _mapper.Map<EventViewModel>(@event),
+                //CreateInvitationBindingModel = new CreateInvitationBindingModel()
+            };
             return View(result);
         }
 

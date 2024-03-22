@@ -1,10 +1,6 @@
 ﻿@using OutdoorPlanner.Models.Enum
 @model PaginatedList<OutdoorPlanner.ViewModels.EventViewModel>
 
-@{
-    ViewData["Title"] = "All";
-}
-
 @if (TempData["FilterByCategory"] != null)
 {
     <h1>@TempData["FilterByCategory"]</h1>
@@ -30,18 +26,12 @@
 
             <input type="submit" value="Submit" class="btn btn-primary" />
         </div>
-
-        @* <p class="mb-0">
-            <a asp-action="Create" class="btn btn-success">Create New Event</a>
-        </p> *@
-
         <p class="mb-1">
-            <a asp-action="Create" class="btn btn-success">Create New Event</a>
+            <a asp-action="CreateEvent" class="btn btn-success">Create New Event</a>
             <a asp-action="PastEvents" class="btn btn-secondary">Past Events</a>
         </p>
     </div>
 }
-
 <br />
 
 <div>
@@ -58,7 +48,7 @@
 <table class="table">
     <thead>
         <tr>
-            <th> Name </th>
+            <th> Event Name </th>
             <th> Date & Time </th>
             <th> Weather Forecast </th>
             <th> City </th>
@@ -95,21 +85,15 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Category)
             </td>
-            
             <td>
-                <a asp-action="Update" asp-route-id="@item.Id" class="btn btn-info btn-sm">
-                    <i class="fas fa-edit"></i> Edit
-                </a>
-                |
-                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">
-                    <i class="fas fa-trash-alt"></i> Delete
-                </a>
+                <a asp-controller="Invitations" asp-action="ShowEventInvitations" asp-route-eventId="@item.Id" class="btn btn-success btn-sm">Event Guestlist</a> |
+                <a asp-action="Update" asp-route-id="@item.Id" class="btn btn-info btn-sm">Edit</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
             </td>
         </tr>
 }
     </tbody>
 </table>
-
 
 @{
     var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";

@@ -10,7 +10,14 @@ namespace OutdoorPlanner.AutoMapper
         {
             CreateMap<Event, EventViewModel>().ReverseMap();
             CreateMap<Event, CreateEventBindingModel>().ReverseMap();
-            CreateMap<Event, EventViewModel>().ReverseMap();
+
+            CreateMap<Invitation, InvitationViewModel>().ReverseMap();
+            CreateMap<Invitation, CreateInvitationBindingModel>().ReverseMap();
+
+            CreateMap<EventViewModel, InvitationsEventViewModel>().ReverseMap();
+            CreateMap<CreateInvitationBindingModel, InvitationsEventViewModel>().ReverseMap();
+
+            CreateMap<Event, InvitationsEventViewModel>().ReverseMap();
         }
     }
 }

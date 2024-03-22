@@ -1,47 +1,99 @@
-﻿@model OutdoorPlanner.ViewModels.EventViewModel
+﻿@model InvitationsEventViewModel
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>@Model.Name</h1>
+<h1>@Model.EventViewModel.Name</h1>
 
 <div>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.DisplayNameFor(model => model.EventViewModel.Name)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
+            @Html.DisplayFor(model => model.EventViewModel.Name)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Date)
+            @Html.DisplayNameFor(model => model.EventViewModel.Date)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Date)
+            @Html.DisplayFor(model => model.EventViewModel.Date)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.City)
+            @Html.DisplayNameFor(model => model.EventViewModel.City)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.City)
+            @Html.DisplayFor(model => model.EventViewModel.City)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
+            @Html.DisplayNameFor(model => model.EventViewModel.Description)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
+            @Html.DisplayFor(model => model.EventViewModel.Description)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Category)
+            @Html.DisplayNameFor(model => model.EventViewModel.Category)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Category)
+            @Html.DisplayFor(model => model.EventViewModel.Category)
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Update" asp-route-id="@Model?.Id">Edit</a> |
+    @* <a asp-action="Update" asp-route-id="@Model?.Id">Edit</a> | *@
     <a asp-action="All">Back to List</a>
+</div>
+
+<br />
+
+@* <form asp-action="Create" asp-controller="Invitations" method="post">
+    <div class="form-group">
+        <label asp-for="CreateInvitationBindingModel.UserEmail" class="control-label"></label>
+        <input asp-for="CreateInvitationBindingModel.UserEmail" class="form-control" />
+        <span asp-validation-for="CreateInvitationBindingModel.UserEmail" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CreateInvitationBindingModel.Status" class="control-label"></label>
+        <select asp-for="CreateInvitationBindingModel.Status" class="form-control" asp-items="Html.GetEnumSelectList<OutdoorPlanner.Models.Enum.InvitationStatus>()"></select>
+        <span asp-validation-for="CreateInvitationBindingModel.Status" class="text-danger"></span>
+    </div>
+    <input asp-for="EventViewModel.Id" type="hidden" />
+    <input type="submit" value="Create Invitation" class="btn btn-primary" />
+</form> *@
+
+
+
+<div>
+    <table class="table">
+    <thead>
+        <tr>
+            <th>
+                User Email
+            </th>
+            <th>
+                Status
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var invitation in Model.EventViewModel.Invitations) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => invitation.UserEmail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => invitation.Status)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@invitation.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@invitation.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@invitation.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table> 
 </div>

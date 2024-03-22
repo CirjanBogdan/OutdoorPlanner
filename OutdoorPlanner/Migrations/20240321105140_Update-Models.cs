@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace OutdoorPlanner.Migrations
 {
     /// <inheritdoc />
-    public partial class OutdoorPlanner : Migration
+    public partial class UpdateModels : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -53,6 +53,21 @@ namespace OutdoorPlanner.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CreateInvitationBindingModel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EventId = table.Column<int>(type: "int", nullable: false),
+                    UserEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CreateInvitationBindingModel", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "EventViewModel",
                 columns: table => new
                 {
@@ -66,7 +81,9 @@ namespace OutdoorPlanner.Migrations
                     Category = table.Column<int>(type: "int", nullable: false),
                     Rain = table.Column<bool>(type: "bit", nullable: false),
                     Forcasted = table.Column<bool>(type: "bit", nullable: false),
-                    CloudsValue = table.Column<int>(type: "int", nullable: false)
+                    CloudsValue = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -193,7 +210,7 @@ namespace OutdoorPlanner.Migrations
                     Temperature = table.Column<int>(type: "int", nullable: false),
                     Rain = table.Column<bool>(type: "bit", nullable: false),
                     Forcasted = table.Column<bool>(type: "bit", nullable: false),
-                    CloudsValue = table.Column<int>(type: "int", nullable: false),
+                    CloudsValue = table.Column<int>(type: "int", nullable: true),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
@@ -206,19 +223,92 @@ namespace OutdoorPlanner.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Invitations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: true),
+                    EventId = table.Column<int>(type: "int", nullable: false),
+                    EventViewModelId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Invitations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Invitations_EventViewModel_EventViewModelId",
+                        column: x => x.EventViewModelId,
+                        principalTable: "EventViewModel",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Invitations_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InvitationViewModel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    EventId = table.Column<int>(type: "int", nullable: false),
+                    EventName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InvitationViewModel", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_InvitationViewModel_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserInvitations",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    InvitationId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserInvitations", x => new { x.UserId, x.InvitationId });
+                    table.ForeignKey(
+                        name: "FK_UserInvitations_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserInvitations_Invitations_InvitationId",
+                        column: x => x.InvitationId,
+                        principalTable: "Invitations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "Events",
                 columns: new[] { "Id", "Category", "City", "CloudsValue", "Date", "Description", "Forcasted", "Name", "Rain", "Temperature", "UserId" },
                 values: new object[,]
                 {
-                    { 1, 1, 2, 0, new DateTime(2024, 3, 14, 13, 17, 32, 495, DateTimeKind.Local).AddTicks(5805), "Description", false, "Untold Festival", false, 0, null },
-                    { 2, 1, 7, 0, new DateTime(2024, 3, 16, 6, 17, 32, 495, DateTimeKind.Local).AddTicks(5858), "Massif Festival", false, "Massif", false, 0, null },
-                    { 3, 0, 0, 0, new DateTime(2024, 3, 17, 0, 17, 32, 495, DateTimeKind.Local).AddTicks(5862), "Description", false, "Smiley Concert", false, 0, null },
-                    { 4, 2, 0, 0, new DateTime(2024, 3, 17, 12, 17, 32, 495, DateTimeKind.Local).AddTicks(5865), "Biggest Food Festival", false, "Bucharest Food Festival", false, 0, null },
-                    { 5, 2, 11, 0, new DateTime(2024, 3, 14, 16, 17, 32, 495, DateTimeKind.Local).AddTicks(5868), "Food", false, "Transylvania Brunch", false, 0, null },
-                    { 6, 2, 5, 0, new DateTime(2024, 3, 16, 15, 17, 32, 495, DateTimeKind.Local).AddTicks(5871), "", false, "International Wine Festival of Romania", false, 0, null },
-                    { 7, 1, 2, 0, new DateTime(2024, 3, 13, 21, 17, 32, 495, DateTimeKind.Local).AddTicks(5873), "", false, "Electric Castle", false, 0, null },
-                    { 8, 0, 4, 0, new DateTime(2024, 3, 13, 12, 17, 32, 495, DateTimeKind.Local).AddTicks(5876), "", false, "Past Event", false, 0, null }
+                    { 1, 1, 2, null, new DateTime(2024, 3, 22, 13, 51, 39, 465, DateTimeKind.Local).AddTicks(2511), "Description", false, "Untold Festival", false, 0, null },
+                    { 2, 1, 7, null, new DateTime(2024, 3, 24, 6, 51, 39, 465, DateTimeKind.Local).AddTicks(2575), "Massif Festival", false, "Massif", false, 0, null },
+                    { 3, 0, 0, null, new DateTime(2024, 3, 25, 0, 51, 39, 465, DateTimeKind.Local).AddTicks(2579), "Description", false, "Smiley Concert", false, 0, null },
+                    { 4, 2, 0, null, new DateTime(2024, 3, 25, 12, 51, 39, 465, DateTimeKind.Local).AddTicks(2583), "Biggest Food Festival", false, "Bucharest Food Festival", false, 0, null },
+                    { 5, 2, 11, null, new DateTime(2024, 3, 22, 16, 51, 39, 465, DateTimeKind.Local).AddTicks(2586), "Food", false, "Transylvania Brunch", false, 0, null },
+                    { 6, 2, 5, null, new DateTime(2024, 3, 24, 15, 51, 39, 465, DateTimeKind.Local).AddTicks(2589), "", false, "International Wine Festival of Romania", false, 0, null },
+                    { 7, 1, 2, null, new DateTime(2024, 3, 21, 21, 51, 39, 465, DateTimeKind.Local).AddTicks(2592), "", false, "Electric Castle", false, 0, null },
+                    { 8, 0, 4, null, new DateTime(2024, 3, 21, 12, 51, 39, 465, DateTimeKind.Local).AddTicks(2644), "", false, "Past Event", false, 0, null }
                 });
 
             migrationBuilder.CreateIndex(
@@ -264,6 +354,26 @@ namespace OutdoorPlanner.Migrations
                 name: "IX_Events_UserId",
                 table: "Events",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invitations_EventId",
+                table: "Invitations",
+                column: "EventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invitations_EventViewModelId",
+                table: "Invitations",
+                column: "EventViewModelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InvitationViewModel_EventId",
+                table: "InvitationViewModel",
+                column: "EventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserInvitations_InvitationId",
+                table: "UserInvitations",
+                column: "InvitationId");
         }
 
         /// <inheritdoc />
@@ -285,13 +395,25 @@ namespace OutdoorPlanner.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Events");
+                name: "CreateInvitationBindingModel");
+
+            migrationBuilder.DropTable(
+                name: "InvitationViewModel");
+
+            migrationBuilder.DropTable(
+                name: "UserInvitations");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Invitations");
 
             migrationBuilder.DropTable(
                 name: "EventViewModel");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "Events");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

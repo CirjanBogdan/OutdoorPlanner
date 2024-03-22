@@ -12,15 +12,15 @@ using OutdoorPlanner.Data;
 namespace OutdoorPlanner.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240313101733_OutdoorPlanner")]
-    partial class OutdoorPlanner
+    [Migration("20240321105140_Update-Models")]
+    partial class UpdateModels
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("ProductVersion", "8.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -241,7 +241,7 @@ namespace OutdoorPlanner.Migrations
                     b.Property<int>("City")
                         .HasColumnType("int");
 
-                    b.Property<int>("CloudsValue")
+                    b.Property<int?>("CloudsValue")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
@@ -278,8 +278,7 @@ namespace OutdoorPlanner.Migrations
                             Id = 1,
                             Category = 1,
                             City = 2,
-                            CloudsValue = 0,
-                            Date = new DateTime(2024, 3, 14, 13, 17, 32, 495, DateTimeKind.Local).AddTicks(5805),
+                            Date = new DateTime(2024, 3, 22, 13, 51, 39, 465, DateTimeKind.Local).AddTicks(2511),
                             Description = "Description",
                             Forcasted = false,
                             Name = "Untold Festival",
@@ -291,8 +290,7 @@ namespace OutdoorPlanner.Migrations
                             Id = 2,
                             Category = 1,
                             City = 7,
-                            CloudsValue = 0,
-                            Date = new DateTime(2024, 3, 16, 6, 17, 32, 495, DateTimeKind.Local).AddTicks(5858),
+                            Date = new DateTime(2024, 3, 24, 6, 51, 39, 465, DateTimeKind.Local).AddTicks(2575),
                             Description = "Massif Festival",
                             Forcasted = false,
                             Name = "Massif",
@@ -304,8 +302,7 @@ namespace OutdoorPlanner.Migrations
                             Id = 3,
                             Category = 0,
                             City = 0,
-                            CloudsValue = 0,
-                            Date = new DateTime(2024, 3, 17, 0, 17, 32, 495, DateTimeKind.Local).AddTicks(5862),
+                            Date = new DateTime(2024, 3, 25, 0, 51, 39, 465, DateTimeKind.Local).AddTicks(2579),
                             Description = "Description",
                             Forcasted = false,
                             Name = "Smiley Concert",
@@ -317,8 +314,7 @@ namespace OutdoorPlanner.Migrations
                             Id = 4,
                             Category = 2,
                             City = 0,
-                            CloudsValue = 0,
-                            Date = new DateTime(2024, 3, 17, 12, 17, 32, 495, DateTimeKind.Local).AddTicks(5865),
+                            Date = new DateTime(2024, 3, 25, 12, 51, 39, 465, DateTimeKind.Local).AddTicks(2583),
                             Description = "Biggest Food Festival",
                             Forcasted = false,
                             Name = "Bucharest Food Festival",
@@ -330,8 +326,7 @@ namespace OutdoorPlanner.Migrations
                             Id = 5,
                             Category = 2,
                             City = 11,
-                            CloudsValue = 0,
-                            Date = new DateTime(2024, 3, 14, 16, 17, 32, 495, DateTimeKind.Local).AddTicks(5868),
+                            Date = new DateTime(2024, 3, 22, 16, 51, 39, 465, DateTimeKind.Local).AddTicks(2586),
                             Description = "Food",
                             Forcasted = false,
                             Name = "Transylvania Brunch",
@@ -343,8 +338,7 @@ namespace OutdoorPlanner.Migrations
                             Id = 6,
                             Category = 2,
                             City = 5,
-                            CloudsValue = 0,
-                            Date = new DateTime(2024, 3, 16, 15, 17, 32, 495, DateTimeKind.Local).AddTicks(5871),
+                            Date = new DateTime(2024, 3, 24, 15, 51, 39, 465, DateTimeKind.Local).AddTicks(2589),
                             Description = "",
                             Forcasted = false,
                             Name = "International Wine Festival of Romania",
@@ -356,8 +350,7 @@ namespace OutdoorPlanner.Migrations
                             Id = 7,
                             Category = 1,
                             City = 2,
-                            CloudsValue = 0,
-                            Date = new DateTime(2024, 3, 13, 21, 17, 32, 495, DateTimeKind.Local).AddTicks(5873),
+                            Date = new DateTime(2024, 3, 21, 21, 51, 39, 465, DateTimeKind.Local).AddTicks(2592),
                             Description = "",
                             Forcasted = false,
                             Name = "Electric Castle",
@@ -369,14 +362,80 @@ namespace OutdoorPlanner.Migrations
                             Id = 8,
                             Category = 0,
                             City = 4,
-                            CloudsValue = 0,
-                            Date = new DateTime(2024, 3, 13, 12, 17, 32, 495, DateTimeKind.Local).AddTicks(5876),
+                            Date = new DateTime(2024, 3, 21, 12, 51, 39, 465, DateTimeKind.Local).AddTicks(2644),
                             Description = "",
                             Forcasted = false,
                             Name = "Past Event",
                             Rain = false,
                             Temperature = 0
                         });
+                });
+
+            modelBuilder.Entity("OutdoorPlanner.Models.Invitation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("EventViewModelId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("EventViewModelId");
+
+                    b.ToTable("Invitations");
+                });
+
+            modelBuilder.Entity("OutdoorPlanner.Models.UserInvitation", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("InvitationId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "InvitationId");
+
+                    b.HasIndex("InvitationId");
+
+                    b.ToTable("UserInvitations");
+                });
+
+            modelBuilder.Entity("OutdoorPlanner.ViewModels.CreateInvitationBindingModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CreateInvitationBindingModel");
                 });
 
             modelBuilder.Entity("OutdoorPlanner.ViewModels.EventViewModel", b =>
@@ -414,9 +473,43 @@ namespace OutdoorPlanner.Migrations
                     b.Property<int>("Temperature")
                         .HasColumnType("int");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("EventViewModel");
+                });
+
+            modelBuilder.Entity("OutdoorPlanner.ViewModels.InvitationViewModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EventName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("InvitationViewModel");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -479,9 +572,71 @@ namespace OutdoorPlanner.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("OutdoorPlanner.Models.Invitation", b =>
+                {
+                    b.HasOne("OutdoorPlanner.Models.Event", "Event")
+                        .WithMany("Invitations")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OutdoorPlanner.ViewModels.EventViewModel", null)
+                        .WithMany("Invitations")
+                        .HasForeignKey("EventViewModelId");
+
+                    b.Navigation("Event");
+                });
+
+            modelBuilder.Entity("OutdoorPlanner.Models.UserInvitation", b =>
+                {
+                    b.HasOne("OutdoorPlanner.Models.Invitation", "Invitation")
+                        .WithMany("UserInvitation")
+                        .HasForeignKey("InvitationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OutdoorPlanner.Models.ApplicationUser", "User")
+                        .WithMany("UserInvitations")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Invitation");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("OutdoorPlanner.ViewModels.InvitationViewModel", b =>
+                {
+                    b.HasOne("OutdoorPlanner.Models.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+                });
+
             modelBuilder.Entity("OutdoorPlanner.Models.ApplicationUser", b =>
                 {
                     b.Navigation("Events");
+
+                    b.Navigation("UserInvitations");
+                });
+
+            modelBuilder.Entity("OutdoorPlanner.Models.Event", b =>
+                {
+                    b.Navigation("Invitations");
+                });
+
+            modelBuilder.Entity("OutdoorPlanner.Models.Invitation", b =>
+                {
+                    b.Navigation("UserInvitation");
+                });
+
+            modelBuilder.Entity("OutdoorPlanner.ViewModels.EventViewModel", b =>
+                {
+                    b.Navigation("Invitations");
                 });
 #pragma warning restore 612, 618
         }
