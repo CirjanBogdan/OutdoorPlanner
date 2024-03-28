@@ -26,5 +26,7 @@ namespace OutdoorPlanner.Models
         public ApplicationUser? User { get; set; }
 
         public ICollection<Invitation>? Invitations { get; set; }
+
+        public ICollection<Post>? Posts { get; set; }
     }
 }

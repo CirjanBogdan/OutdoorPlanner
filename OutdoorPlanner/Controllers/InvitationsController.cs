@@ -50,7 +50,7 @@ namespace OutdoorPlanner.Controllers
                 };
                 return View(model);
             }
-            TempData["ErrorMessage"] = "Invitations can only be created by the event creator.";
+            TempData["ErrorMessage"] = "Invitations can only be created by the event owner.";
 
             return RedirectToAction("ShowEventInvitations", new { eventId });
         }

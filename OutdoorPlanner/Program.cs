@@ -31,6 +31,7 @@ namespace OutdoorPlanner
             builder.Services.AddScoped<IEventService, EventService>();
             builder.Services.AddScoped<IInvitationsService, InvitationsService>();
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<INewsFeedService, NewsFeedService>();
 
             builder.Services.AddSession();
 

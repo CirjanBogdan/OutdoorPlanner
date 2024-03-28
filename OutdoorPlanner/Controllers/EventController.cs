@@ -24,10 +24,8 @@ namespace OutdoorPlanner.Controllers
             _eventService = eventService;
         }
 
-
         public async Task<IActionResult> All(int? pageNumber, string filterByCategory)
         {
-            
             if (filterByCategory != null)
                 HttpContext.Session.SetString("filterByCategory", filterByCategory);
             else if (pageNumber is null)

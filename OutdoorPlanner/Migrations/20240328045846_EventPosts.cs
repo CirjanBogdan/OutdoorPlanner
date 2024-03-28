@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace OutdoorPlanner.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateModels : Migration
+    public partial class EventPosts : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -88,6 +88,23 @@ namespace OutdoorPlanner.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_EventViewModel", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InvitationViewModel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InvitationId = table.Column<int>(type: "int", nullable: false),
+                    UserEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    EventId = table.Column<int>(type: "int", nullable: false),
+                    EventName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InvitationViewModel", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -224,6 +241,71 @@ namespace OutdoorPlanner.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PostCreateBindingModel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Author = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EventId = table.Column<int>(type: "int", nullable: false),
+                    EventViewModelId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PostCreateBindingModel", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PostCreateBindingModel_EventViewModel_EventViewModelId",
+                        column: x => x.EventViewModelId,
+                        principalTable: "EventViewModel",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PostEditBindingModel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EventId = table.Column<int>(type: "int", nullable: false),
+                    Author = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Edited = table.Column<bool>(type: "bit", nullable: false),
+                    EventViewModelId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PostEditBindingModel", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PostEditBindingModel_EventViewModel_EventViewModelId",
+                        column: x => x.EventViewModelId,
+                        principalTable: "EventViewModel",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PostsEventViewModel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EventViewModelId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PostsEventViewModel", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PostsEventViewModel_EventViewModel_EventViewModelId",
+                        column: x => x.EventViewModelId,
+                        principalTable: "EventViewModel",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Invitations",
                 columns: table => new
                 {
@@ -251,25 +333,58 @@ namespace OutdoorPlanner.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "InvitationViewModel",
+                name: "Posts",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Author = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Edited = table.Column<bool>(type: "bit", nullable: false),
                     EventId = table.Column<int>(type: "int", nullable: false),
-                    EventName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_InvitationViewModel", x => x.Id);
+                    table.PrimaryKey("PK_Posts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_InvitationViewModel_Events_EventId",
+                        name: "FK_Posts_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Posts_Events_EventId",
                         column: x => x.EventId,
                         principalTable: "Events",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PostViewModel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Author = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Edited = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EventId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PostsEventViewModelId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PostViewModel", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PostViewModel_PostsEventViewModel_PostsEventViewModelId",
+                        column: x => x.PostsEventViewModelId,
+                        principalTable: "PostsEventViewModel",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -301,14 +416,14 @@ namespace OutdoorPlanner.Migrations
                 columns: new[] { "Id", "Category", "City", "CloudsValue", "Date", "Description", "Forcasted", "Name", "Rain", "Temperature", "UserId" },
                 values: new object[,]
                 {
-                    { 1, 1, 2, null, new DateTime(2024, 3, 22, 13, 51, 39, 465, DateTimeKind.Local).AddTicks(2511), "Description", false, "Untold Festival", false, 0, null },
-                    { 2, 1, 7, null, new DateTime(2024, 3, 24, 6, 51, 39, 465, DateTimeKind.Local).AddTicks(2575), "Massif Festival", false, "Massif", false, 0, null },
-                    { 3, 0, 0, null, new DateTime(2024, 3, 25, 0, 51, 39, 465, DateTimeKind.Local).AddTicks(2579), "Description", false, "Smiley Concert", false, 0, null },
-                    { 4, 2, 0, null, new DateTime(2024, 3, 25, 12, 51, 39, 465, DateTimeKind.Local).AddTicks(2583), "Biggest Food Festival", false, "Bucharest Food Festival", false, 0, null },
-                    { 5, 2, 11, null, new DateTime(2024, 3, 22, 16, 51, 39, 465, DateTimeKind.Local).AddTicks(2586), "Food", false, "Transylvania Brunch", false, 0, null },
-                    { 6, 2, 5, null, new DateTime(2024, 3, 24, 15, 51, 39, 465, DateTimeKind.Local).AddTicks(2589), "", false, "International Wine Festival of Romania", false, 0, null },
-                    { 7, 1, 2, null, new DateTime(2024, 3, 21, 21, 51, 39, 465, DateTimeKind.Local).AddTicks(2592), "", false, "Electric Castle", false, 0, null },
-                    { 8, 0, 4, null, new DateTime(2024, 3, 21, 12, 51, 39, 465, DateTimeKind.Local).AddTicks(2644), "", false, "Past Event", false, 0, null }
+                    { 1, 1, 2, null, new DateTime(2024, 3, 29, 7, 58, 45, 679, DateTimeKind.Local).AddTicks(2748), "Description", false, "Untold Festival", false, 0, null },
+                    { 2, 1, 7, null, new DateTime(2024, 3, 31, 0, 58, 45, 679, DateTimeKind.Local).AddTicks(2814), "Massif Festival", false, "Massif", false, 0, null },
+                    { 3, 0, 0, null, new DateTime(2024, 3, 31, 18, 58, 45, 679, DateTimeKind.Local).AddTicks(2818), "Description", false, "Smiley Concert", false, 0, null },
+                    { 4, 2, 0, null, new DateTime(2024, 4, 1, 6, 58, 45, 679, DateTimeKind.Local).AddTicks(2821), "Biggest Food Festival", false, "Bucharest Food Festival", false, 0, null },
+                    { 5, 2, 11, null, new DateTime(2024, 3, 29, 10, 58, 45, 679, DateTimeKind.Local).AddTicks(2824), "Food", false, "Transylvania Brunch", false, 0, null },
+                    { 6, 2, 5, null, new DateTime(2024, 3, 31, 9, 58, 45, 679, DateTimeKind.Local).AddTicks(2827), "", false, "International Wine Festival of Romania", false, 0, null },
+                    { 7, 1, 2, null, new DateTime(2024, 3, 28, 15, 58, 45, 679, DateTimeKind.Local).AddTicks(2830), "", false, "Electric Castle", false, 0, null },
+                    { 8, 0, 4, null, new DateTime(2024, 3, 28, 6, 58, 45, 679, DateTimeKind.Local).AddTicks(2833), "", false, "Past Event", false, 0, null }
                 });
 
             migrationBuilder.CreateIndex(
@@ -366,9 +481,34 @@ namespace OutdoorPlanner.Migrations
                 column: "EventViewModelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvitationViewModel_EventId",
-                table: "InvitationViewModel",
+                name: "IX_PostCreateBindingModel_EventViewModelId",
+                table: "PostCreateBindingModel",
+                column: "EventViewModelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PostEditBindingModel_EventViewModelId",
+                table: "PostEditBindingModel",
+                column: "EventViewModelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_EventId",
+                table: "Posts",
                 column: "EventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_UserId",
+                table: "Posts",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PostsEventViewModel_EventViewModelId",
+                table: "PostsEventViewModel",
+                column: "EventViewModelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PostViewModel_PostsEventViewModelId",
+                table: "PostViewModel",
+                column: "PostsEventViewModelId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserInvitations_InvitationId",
@@ -401,10 +541,25 @@ namespace OutdoorPlanner.Migrations
                 name: "InvitationViewModel");
 
             migrationBuilder.DropTable(
+                name: "PostCreateBindingModel");
+
+            migrationBuilder.DropTable(
+                name: "PostEditBindingModel");
+
+            migrationBuilder.DropTable(
+                name: "Posts");
+
+            migrationBuilder.DropTable(
+                name: "PostViewModel");
+
+            migrationBuilder.DropTable(
                 name: "UserInvitations");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "PostsEventViewModel");
 
             migrationBuilder.DropTable(
                 name: "Invitations");

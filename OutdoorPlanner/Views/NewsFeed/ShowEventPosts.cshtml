@@ -1,0 +1,104 @@
+﻿@model PostsEventViewModel
+
+@{
+    ViewData["Title"] = "EventPosts";
+}
+
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-12 text-center">
+            <div class="text-black p-3 rounded">
+                <h1>@Model.EventViewModel.Name News Feed</h1>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <p class="card-text">@Model.EventViewModel.Date.ToString("dd/MM/yyyy hh:mm tt")</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <p class="card-text">
+                            @if (Model.EventViewModel.Forcasted is false)
+                            {
+                                <span>Not forecasted</span>
+                            }
+                            else if (Model.EventViewModel.Rain)
+                            {
+                                <span>🌧️ @Model.EventViewModel.Temperature°C</span>
+                            }
+                            else if (Model.EventViewModel.CloudsValue < 30)
+                            {
+                                <span>☀️ @Model.EventViewModel.Temperature°C</span>
+                            }
+                            else if (Model.EventViewModel.CloudsValue < 75)
+                            {
+                                <span>⛅ @Model.EventViewModel.Temperature°C</span>
+                            }
+                            else
+                            {
+                                <span>☁️ @Model.EventViewModel.Temperature°C</span>
+                            }
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <p class="card-text">@Html.DisplayFor(modelItem => Model.EventViewModel.City)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <p class="card-text">@Html.DisplayFor(modelItem => Model.EventViewModel.Category)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <div class="row mt-4">
+        <div class="col">
+            <p>
+                <a class="btn btn-primary btn-lg" asp-action="CreatePost" asp-route-eventId="@Model.EventViewModel.Id">Create New Post</a>
+                <a class="btn btn-success btn-lg" asp-controller="Invitations" asp-action="ShowEventInvitations" asp-route-eventId="@Model.EventViewModel.Id">Guest List</a>
+            </p>
+        </div>
+    </div>
+<div class="row mt-4">
+    @foreach (var item in Model.PostsList)
+    {
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">@item.Title</h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary">@item.Author</h6>
+                <p class="card-text">@item.Content</p>
+                <a class="btn btn-sm btn-primary" asp-action="EditPost" asp-route-eventId="@item.EventId" asp-route-postId="@item.Id">Edit</a>
+                <a class="btn btn-sm btn-danger" asp-action="DeletePost" asp-route-postId="@item.Id">Delete</a>
+            </div>
+        </div>
+    }
+</div>

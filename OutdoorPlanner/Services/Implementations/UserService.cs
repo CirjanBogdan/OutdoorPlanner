@@ -56,5 +56,10 @@ namespace OutdoorPlanner.Services.Implementations
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<ApplicationUser> GetUserById(string userId)
+        {
+            return await _context.Users.FindAsync(userId);
+        }
     }
 }
