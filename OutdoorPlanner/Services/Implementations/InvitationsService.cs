@@ -88,7 +88,6 @@ namespace OutdoorPlanner.Services.Implementations
             {
                 return false;
             }
-            
         }
     }
 }

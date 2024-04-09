@@ -1,0 +1,69 @@
+﻿@model CommentsAndPostViewModel
+
+
+@if (Model.PostViewModel != null)
+{
+    <div class="row mt-5">
+        <div class="col-12 text-center">
+            <div class="text-black p-3 rounded">
+                <h1>@Model.PostViewModel.Title Post - Comments</h1>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+
+<div class="card" style="width: 22rem;">
+    <div class="card-body">
+        <h5 class="card-title">@Model.PostViewModel.Title</h5>
+        <h6 class="card-subtitle mb-2 text-body-secondary">@Model.PostViewModel.Author</h6>
+        <p class="card-text">@Model.PostViewModel.Content</p>
+        <p class="card-text">@Model.PostViewModel.CreatedAt</p>
+    </div>
+</div>
+
+<a asp-action="CreateComment" asp-route-postId="@Model.PostViewModel.Id">Create new comment</a>
+
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<table class="table mt-3">
+<thead class="thead-dark">
+    <tr>
+        <th>Author</th>
+        <th>Comment</th>
+        <th></th>
+    </tr>
+</thead>
+    <tbody>
+        @if (Model.CommentsListViewModel != null)
+        {
+            foreach (var item in Model.CommentsListViewModel)
+            {
+                <tr>
+                    <td>@item.Author</td>
+                    <td>@item.Content</td>
+                    <td>
+                        <a asp-controller="Like" asp-action="AddLikeToComment" asp-route-commentId="@item.Id" class="btn btn-success">(@item.LikesNumber)Like</a>
+                        <a asp-action="EditComment" asp-route-commentId="@item.Id">Edit</a>
+                        <a asp-action="DeleteComment" asp-route-commentId="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+<a asp-controller="NewsFeed" asp-action="ShowEventPosts" asp-route-eventId="@Model.PostViewModel.EventId">Back to Posts</a>

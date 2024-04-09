@@ -16,6 +16,8 @@ namespace OutdoorPlanner.Data
         public DbSet<Invitation> Invitations { get; set; }
         public DbSet<UserInvitation> UserInvitations { get; set; }
         public DbSet<Post> Posts { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<Like> Likes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,6 +40,30 @@ namespace OutdoorPlanner.Data
                 .HasOne(u => u.User)
                 .WithMany(p => p.Posts)
                 .HasForeignKey(id => id.UserId);
+
+            // one to many Post -> Comments
+            modelBuilder.Entity<Comment>()
+                .HasOne(u => u.Post)
+                .WithMany(p => p.Comments)
+                .HasForeignKey(id => id.PostId);
+
+            // one to many User -> Comments
+            modelBuilder.Entity<Comment>()
+                .HasOne(u => u.User)
+                .WithMany(p => p.Comments)
+                .HasForeignKey(id => id.UserId);
+
+            // one to many User -> Likes
+            modelBuilder.Entity<Like>()
+                .HasOne(invitation => invitation.User)
+                .WithMany(invitations => invitations.Likes)
+                .HasForeignKey(invitation => invitation.UserId);
+
+            // one to many User -> Likes
+            modelBuilder.Entity<Like>()
+                .HasOne(invitation => invitation.Comment)
+                .WithMany(invitations => invitations.Likes)
+                .HasForeignKey(invitation => invitation.CommentId);
 
             // many to many User -> Invitations
 
@@ -133,5 +159,7 @@ namespace OutdoorPlanner.Data
         public DbSet<OutdoorPlanner.ViewModels.PostCreateBindingModel> PostCreateBindingModel { get; set; } = default!;
         public DbSet<OutdoorPlanner.ViewModels.PostEditBindingModel> PostEditBindingModel { get; set; } = default!;
         public DbSet<OutdoorPlanner.ViewModels.PostViewModel> PostViewModel { get; set; } = default!;
+        public DbSet<OutdoorPlanner.ViewModels.CommentsAndPostViewModel> CommentsAndPostViewModel { get; set; } = default!;
+        public DbSet<OutdoorPlanner.ViewModels.CommentCreateBindingModel> CommentCreateBindingModel { get; set; } = default!;
     }
 }

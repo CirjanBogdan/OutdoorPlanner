@@ -4,6 +4,69 @@
     ViewData["Title"] = "Show Event Invitations";
 }
 
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-12 text-center">
+            <div class="text-black p-3 rounded">
+                <h1>@Model.EventViewModel.Name Guest List</h1>
+            </div>
+        </div>
+    </div>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <p class="card-text">@Model.EventViewModel.Date.ToString("dd/MM/yyyy hh:mm tt")</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <p class="card-text">
+                        @if (Model.EventViewModel.Forcasted is false)
+                        {
+                            <span>Not forecasted</span>
+                        }
+                        else if (Model.EventViewModel.Rain)
+                        {
+                            <span>🌧️ @Model.EventViewModel.Temperature°C</span>
+                        }
+                        else if (Model.EventViewModel.CloudsValue < 30)
+                        {
+                            <span>☀️ @Model.EventViewModel.Temperature°C</span>
+                        }
+                        else if (Model.EventViewModel.CloudsValue < 75)
+                        {
+                            <span>⛅ @Model.EventViewModel.Temperature°C</span>
+                        }
+                        else
+                        {
+                            <span>☁️ @Model.EventViewModel.Temperature°C</span>
+                        }
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <p class="card-text">@Html.DisplayFor(modelItem => Model.EventViewModel.City)</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <p class="card-text">@Html.DisplayFor(modelItem => Model.EventViewModel.Category)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
 @if (TempData["ErrorMessage"] != null)
 {
     <div class="alert alert-danger">
@@ -16,9 +79,6 @@
         @TempData["SuccessMessage"]
     </div>
 }
-
-<h3>Event Name: @Model.EventViewModel.Name</h3>
-<h3>Creator Username: @Model.EventViewModel.UserName</h3>
 
 <div class="mt-3">
     <a class="btn btn-primary" asp-action="CreateInvitation" asp-route-eventId="@Model.EventViewModel.Id">Create Invitation</a>

@@ -12,15 +12,17 @@ namespace OutdoorPlanner.Controllers
     public class InvitationsController : Controller
     {
         private readonly IInvitationsService _invitationsService;
+        private readonly IEventService _eventService;
         private readonly IUserService _userService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
 
-        public InvitationsController(IInvitationsService invitationsService, UserManager<ApplicationUser> userManager,
+        public InvitationsController(IInvitationsService invitationsService, IEventService eventService, UserManager<ApplicationUser> userManager,
             ApplicationDbContext context, IMapper mapper, IUserService userService)
         {
             _invitationsService = invitationsService;
+            _eventService = eventService;
             _userService = userService;
             _userManager = userManager;
             _context = context;
@@ -90,6 +92,7 @@ namespace OutdoorPlanner.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> DeleteInvitation(int invitationId)
         {
             var invitation = await _invitationsService.GetInvitationById(invitationId);
@@ -99,12 +102,19 @@ namespace OutdoorPlanner.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteInvitationById(int eventId, int invitationId)
         {
-            var deleteInvitation = await _invitationsService.DeleteInvitationById(invitationId);
-
-            if (!deleteInvitation)
-                TempData["ErrorMessage"] = "The invitation has not deleted.";
-            else
-                TempData["SuccessMessage"] = "The invitation was successfuly deleted.";
+            var user = await _userManager.GetUserAsync(User);
+            var @event = await _eventService.GetEventById(eventId);
+            if (user.Id == @event.UserId)
+            {
+                var deleteInvitation = await _invitationsService.DeleteInvitationById(invitationId);
+                if (!deleteInvitation)
+                    TempData["ErrorMessage"] = "The invitation has not deleted.";
+                else
+                    TempData["SuccessMessage"] = "The invitation was successfuly deleted.";
+            } else
+            {
+                TempData["ErrorMessage"] = "You do not have access to delete the invitation.";
+            }
 
             return RedirectToAction("ShowEventInvitations", new { eventId });
         }

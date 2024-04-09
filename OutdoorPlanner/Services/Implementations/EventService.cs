@@ -22,29 +22,26 @@ namespace OutdoorPlanner.Services.Implementations
 
         public async Task<List<EventViewModel>> GetUpcomingEvents(string filterByCategory)
         {
-            Enum.TryParse(filterByCategory, out Category enumCategory);
-            DateTime currentDate = DateTime.Now;
-            var upcomingEvents = await _context.Events.Where(c => (filterByCategory == null || c.Category == enumCategory) && c.Date > currentDate)
-                                                      .OrderBy(d => d.Date)
-                                                      .ToListAsync();
-            List<EventViewModel> result = _mapper.Map<List<EventViewModel>>(upcomingEvents);
-            return result;
+            Enum.TryParse(filterByCategory, out Category enumEventCategory);
+            var upcomingEvents = await _context.Events.Where(e => (filterByCategory == null || e.Category == enumEventCategory) && e.Date > DateTime.Now)
+                                                      .OrderBy(d => d.Date).ToListAsync();
+
+            return _mapper.Map<List<EventViewModel>>(upcomingEvents);
         }
 
         public async Task<List<EventViewModel>> GetPastEvents()
         {
-            DateTime currentDate = DateTime.Now;
-            var pastEvents = await _context.Events.Where(e => e.Date < currentDate).OrderBy(d => d.Date).ToListAsync();
-            List<EventViewModel> result = _mapper.Map<List<EventViewModel>>(pastEvents);
-            return result;
+            var pastEvents = await _context.Events.Where(e => e.Date < DateTime.Now).OrderBy(d => d.Date).ToListAsync();
+
+            return _mapper.Map<List<EventViewModel>>(pastEvents);
         }
 
-        public async Task<bool> CreateEvent(CreateEventBindingModel @event, string userId)
+        public async Task<bool> CreateEvent(CreateEventBindingModel model, string userId)
         {
             try
             {
                 var user = await _context.Users.FindAsync(userId);
-                var newEvent = _mapper.Map<Event>(@event);
+                var newEvent = _mapper.Map<Event>(model);
 
                 newEvent.User = user;
                 newEvent.UserId = user.Id;
@@ -52,7 +49,16 @@ namespace OutdoorPlanner.Services.Implementations
                 _context.Events.Add(newEvent);
                 _context.Users.Update(user);
 
+                var invitation = new Invitation()
+                {
+                    EventId = model.Id,
+                    Event = newEvent,
+                    UserEmail = user.Email,
+                    Status = InvitationStatus.Accepted,
+                };
+                var autoInvite = await _context.Invitations.AddAsync(invitation);
                 await _context.SaveChangesAsync();
+
                 return true;
             }
             catch
@@ -61,7 +67,7 @@ namespace OutdoorPlanner.Services.Implementations
             }
         }
 
-        public async Task<bool> DeleteEvent(int id, EventViewModel model)
+        public async Task<bool> DeleteEvent(int id)
         {
             try
             {
@@ -78,18 +84,18 @@ namespace OutdoorPlanner.Services.Implementations
 
         public async Task<Event> GetEventById(int id)
         {
-            var @event = await _context.Events.FindAsync(id);
-            return @event;
+            return await _context.Events.FindAsync(id);
         }
 
         public async Task<bool> UpdateEvent(int id, EventViewModel model)
         {
             try
             {
-                var @event = await _context.Events.FirstOrDefaultAsync(c => c.Id == id);
+                var @event = await _context.Events.FindAsync(id);
                 @event = _mapper.Map<Event>(model);
                 _context.Events.Update(@event);
                 await _context.SaveChangesAsync();
+
                 return true;
             }
             catch

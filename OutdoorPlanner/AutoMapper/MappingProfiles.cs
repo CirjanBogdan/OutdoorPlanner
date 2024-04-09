@@ -21,6 +21,9 @@ namespace OutdoorPlanner.AutoMapper
             CreateMap<Post, PostCreateBindingModel>().ReverseMap();
             CreateMap<Post, PostViewModel>().ReverseMap();
             CreateMap<Post, PostEditBindingModel>().ReverseMap();
+
+            CreateMap<Comment, CommentViewModel>().ReverseMap();
+            CreateMap<Comment, CommentCreateBindingModel>().ReverseMap();
         }
     }
 }

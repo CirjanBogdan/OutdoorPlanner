@@ -123,9 +123,9 @@ namespace OutdoorPlanner.Controllers
         }
 
         [HttpPost] 
-        public async Task<IActionResult> Delete(int id, EventViewModel model)
+        public async Task<IActionResult> DeleteEvent(int id)
         {
-            var result = await _eventService.DeleteEvent(id, model);
+            var result = await _eventService.DeleteEvent(id);
 
             if (result)
                 TempData["SuccessMessage"] = "Event deleted successfully.";

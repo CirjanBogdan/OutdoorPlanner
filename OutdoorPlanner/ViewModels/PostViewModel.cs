@@ -8,6 +8,7 @@ namespace OutdoorPlanner.ViewModels
         public string? Title { get; set; }
         public string? Author { get; set; }
         public string Content { get; set; } = null!;
+        public int CommentsNumber { get; set; }
         public bool Edited { get; set; }
         public DateTime CreatedAt { get; set; }
         public int EventId { get; set; }
