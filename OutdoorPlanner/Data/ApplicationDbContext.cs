@@ -55,15 +55,22 @@ namespace OutdoorPlanner.Data
 
             // one to many User -> Likes
             modelBuilder.Entity<Like>()
-                .HasOne(invitation => invitation.User)
-                .WithMany(invitations => invitations.Likes)
-                .HasForeignKey(invitation => invitation.UserId);
+                .HasOne(u => u.User)
+                .WithMany(u => u.Likes)
+                .HasForeignKey(u => u.UserId);
 
-            // one to many User -> Likes
+            // one to many Comment -> Likes
             modelBuilder.Entity<Like>()
-                .HasOne(invitation => invitation.Comment)
-                .WithMany(invitations => invitations.Likes)
-                .HasForeignKey(invitation => invitation.CommentId);
+                .HasOne(u => u.Comment)
+                .WithMany(u => u.Likes)
+                .HasForeignKey(u => u.CommentId);
+
+            // one to many Post -> Likes
+            modelBuilder.Entity<Like>()
+                .HasOne(l => l.Post)
+                .WithMany(l => l.Likes)
+                .HasForeignKey(l => l.PostId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
             // many to many User -> Invitations
 

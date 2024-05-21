@@ -98,6 +98,7 @@
                 <h6 class="card-subtitle mb-2 text-body-secondary">@item.Author</h6>
                 <p class="card-text">@item.Content</p>
                 <p class="card-text">@item.CreatedAt</p>
+                <a class="btn btn-sm btn-success" asp-controller="Like" asp-action="AddLikeToPost" asp-route-postId="@item.Id">Like(@item.LikesNumber)</a>
                 <a class="btn btn-sm btn-success" asp-controller="Comments" asp-action="ShowPostComments" asp-route-postId="@item.Id">Comments(@item.CommentsNumber)</a>
                 <a class="btn btn-sm btn-primary" asp-action="EditPost" asp-route-eventId="@item.EventId" asp-route-postId="@item.Id">Edit</a>
                 <a class="btn btn-sm btn-danger" asp-action="DeletePost" asp-route-postId="@item.Id">Delete</a>

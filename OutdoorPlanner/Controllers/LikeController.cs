@@ -43,5 +43,20 @@ namespace OutdoorPlanner.Controllers
 
             return RedirectToAction("ShowPostComments", "Comments", new { comment.PostId });
         }
+
+        [Authorize]
+        public async Task<IActionResult> AddLikeToPost(int postId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var post = await _newsFeedService.GetPostById(postId);
+            var userHasLikedPost = await _likeService.UserHasLikedPost(user.Id, postId);
+
+            if (!userHasLikedPost)
+                await _likeService.AddLikeToPost(postId, user.Id);
+            else
+                await _likeService.RemoveLikeFromPost(postId, user.Id);
+
+            return RedirectToAction("ShowEventPosts", "NewsFeed", new { post.EventId });
+        }
     }
 }

@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using OutdoorPlanner.Data;
 using OutdoorPlanner.Models;
 using OutdoorPlanner.Services.Contracts;
-using System.ComponentModel.Design;
 
 namespace OutdoorPlanner.Services.Implementations
 {
@@ -49,7 +48,6 @@ namespace OutdoorPlanner.Services.Implementations
         {
             try
             {
-                var user = await _context.Users.FindAsync(userId);
                 var comment = await _context.Comments.FindAsync(commentId);
                 var like = await _context.Likes.Where(c => c.CommentId == commentId && c.UserId == userId).FirstOrDefaultAsync();
                 comment.LikesNumber--;
@@ -66,13 +64,67 @@ namespace OutdoorPlanner.Services.Implementations
 
         public async Task<bool> UserHasLikedComment(string userId, int commentId)
         {
-            var user = await _context.Users.FindAsync(userId);
             var commentIsLiked = await _context.Likes.Where(u => u.UserId == userId && u.CommentId == commentId).FirstOrDefaultAsync();
 
             if (commentIsLiked is not null)
                 return true;
             else
                 return false;
+        }
+
+        public async Task<bool> AddLikeToPost(int id, string userId)
+        {
+            try
+            {
+                var user = await _context.Users.FindAsync(userId);
+                var post = await _context.Posts.FindAsync(id);
+
+                var like = new Like
+                {
+                    PostId = id,
+                    UserId = user.Id,
+                };
+
+                post.LikesNumber++;
+                await _context.Likes.AddAsync(like);
+                _context.Posts.Update(post);
+                await _context.SaveChangesAsync();
+                return true;
+            } catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> UserHasLikedPost(string userId, int postId)
+        {
+            var postIsLiked = await _context.Likes.Where(p => p.PostId == postId && p.UserId == userId).FirstOrDefaultAsync();
+
+            var likes = _context.Likes.Where(p => p.PostId == postId && p.UserId == userId).Count();
+
+            if (postIsLiked is not null)
+                return true;
+            else
+                return false;
+        }
+
+        public async Task<bool> RemoveLikeFromPost(int id, string userId)
+        {
+            try
+            {
+                var user = await _context.Users.FindAsync(userId);
+                var post = await _context.Posts.FindAsync(id);
+                var like = await _context.Likes.Where(u => u.UserId == userId && u.PostId == id).FirstOrDefaultAsync();
+                post.LikesNumber--;
+                _context.Likes.Remove(like);
+                _context.Posts.Update(post);
+                await _context.SaveChangesAsync();
+                return true;
+            } catch (Exception)
+            {
+                return false;
+            }
+             
         }
     }
 }

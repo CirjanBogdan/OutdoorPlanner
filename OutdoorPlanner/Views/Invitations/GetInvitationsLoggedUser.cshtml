@@ -27,7 +27,7 @@
 
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.EventName)
+                    <a asp-controller="NewsFeed" asp-action="ShowEventPosts" asp-route-eventId="@item.EventId">@Html.DisplayFor(modelItem => item.EventName)</a>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Status)

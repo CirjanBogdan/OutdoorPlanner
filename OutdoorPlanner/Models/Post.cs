@@ -7,6 +7,7 @@
         public string? Author { get; set; }
         public string Content { get; set; } = null!;
         public int CommentsNumber { get; set; }
+        public int LikesNumber { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public bool Edited { get; set; } = false;
 
@@ -16,5 +17,6 @@
         public ApplicationUser? User { get; set; }
 
         public ICollection<Comment>? Comments { get; set; }
+        public ICollection<Like>? Likes { get; set; }
     }
 }

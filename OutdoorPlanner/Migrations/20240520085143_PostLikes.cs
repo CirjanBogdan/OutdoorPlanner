@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace OutdoorPlanner.Migrations
 {
     /// <inheritdoc />
-    public partial class EventPosts : Migration
+    public partial class PostLikes : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -50,6 +50,21 @@ namespace OutdoorPlanner.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CommentCreateBindingModel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PostId = table.Column<int>(type: "int", nullable: false),
+                    Author = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CommentCreateBindingModel", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -341,6 +356,8 @@ namespace OutdoorPlanner.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Author = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CommentsNumber = table.Column<int>(type: "int", nullable: false),
+                    LikesNumber = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Edited = table.Column<bool>(type: "bit", nullable: false),
                     EventId = table.Column<int>(type: "int", nullable: false),
@@ -371,6 +388,8 @@ namespace OutdoorPlanner.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Author = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CommentsNumber = table.Column<int>(type: "int", nullable: false),
+                    LikesNumber = table.Column<int>(type: "int", nullable: false),
                     Edited = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EventId = table.Column<int>(type: "int", nullable: false),
@@ -411,19 +430,120 @@ namespace OutdoorPlanner.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Comments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Author = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LikesNumber = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    PostId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Comments_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Comments_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CommentsAndPostViewModel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PostViewModelId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CommentsAndPostViewModel", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CommentsAndPostViewModel_PostViewModel_PostViewModelId",
+                        column: x => x.PostViewModelId,
+                        principalTable: "PostViewModel",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Likes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CommentId = table.Column<int>(type: "int", nullable: false),
+                    PostId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Likes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Likes_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Likes_Comments_CommentId",
+                        column: x => x.CommentId,
+                        principalTable: "Comments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Likes_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CommentViewModel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Author = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LikesNumber = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PostId = table.Column<int>(type: "int", nullable: false),
+                    CommentsAndPostViewModelId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CommentViewModel", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CommentViewModel_CommentsAndPostViewModel_CommentsAndPostViewModelId",
+                        column: x => x.CommentsAndPostViewModelId,
+                        principalTable: "CommentsAndPostViewModel",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.InsertData(
                 table: "Events",
                 columns: new[] { "Id", "Category", "City", "CloudsValue", "Date", "Description", "Forcasted", "Name", "Rain", "Temperature", "UserId" },
                 values: new object[,]
                 {
-                    { 1, 1, 2, null, new DateTime(2024, 3, 29, 7, 58, 45, 679, DateTimeKind.Local).AddTicks(2748), "Description", false, "Untold Festival", false, 0, null },
-                    { 2, 1, 7, null, new DateTime(2024, 3, 31, 0, 58, 45, 679, DateTimeKind.Local).AddTicks(2814), "Massif Festival", false, "Massif", false, 0, null },
-                    { 3, 0, 0, null, new DateTime(2024, 3, 31, 18, 58, 45, 679, DateTimeKind.Local).AddTicks(2818), "Description", false, "Smiley Concert", false, 0, null },
-                    { 4, 2, 0, null, new DateTime(2024, 4, 1, 6, 58, 45, 679, DateTimeKind.Local).AddTicks(2821), "Biggest Food Festival", false, "Bucharest Food Festival", false, 0, null },
-                    { 5, 2, 11, null, new DateTime(2024, 3, 29, 10, 58, 45, 679, DateTimeKind.Local).AddTicks(2824), "Food", false, "Transylvania Brunch", false, 0, null },
-                    { 6, 2, 5, null, new DateTime(2024, 3, 31, 9, 58, 45, 679, DateTimeKind.Local).AddTicks(2827), "", false, "International Wine Festival of Romania", false, 0, null },
-                    { 7, 1, 2, null, new DateTime(2024, 3, 28, 15, 58, 45, 679, DateTimeKind.Local).AddTicks(2830), "", false, "Electric Castle", false, 0, null },
-                    { 8, 0, 4, null, new DateTime(2024, 3, 28, 6, 58, 45, 679, DateTimeKind.Local).AddTicks(2833), "", false, "Past Event", false, 0, null }
+                    { 1, 1, 2, null, new DateTime(2024, 5, 21, 12, 51, 43, 48, DateTimeKind.Local).AddTicks(4754), "Description", false, "Untold Festival", false, 0, null },
+                    { 2, 1, 7, null, new DateTime(2024, 5, 23, 5, 51, 43, 48, DateTimeKind.Local).AddTicks(4815), "Massif Festival", false, "Massif", false, 0, null },
+                    { 3, 0, 0, null, new DateTime(2024, 5, 23, 23, 51, 43, 48, DateTimeKind.Local).AddTicks(4819), "Description", false, "Smiley Concert", false, 0, null },
+                    { 4, 2, 0, null, new DateTime(2024, 5, 24, 11, 51, 43, 48, DateTimeKind.Local).AddTicks(4822), "Biggest Food Festival", false, "Bucharest Food Festival", false, 0, null },
+                    { 5, 2, 11, null, new DateTime(2024, 5, 21, 15, 51, 43, 48, DateTimeKind.Local).AddTicks(4825), "Food", false, "Transylvania Brunch", false, 0, null },
+                    { 6, 2, 5, null, new DateTime(2024, 5, 23, 14, 51, 43, 48, DateTimeKind.Local).AddTicks(4828), "", false, "International Wine Festival of Romania", false, 0, null },
+                    { 7, 1, 2, null, new DateTime(2024, 5, 20, 20, 51, 43, 48, DateTimeKind.Local).AddTicks(4830), "", false, "Electric Castle", false, 0, null },
+                    { 8, 0, 4, null, new DateTime(2024, 5, 20, 11, 51, 43, 48, DateTimeKind.Local).AddTicks(4833), "", false, "Past Event", false, 0, null }
                 });
 
             migrationBuilder.CreateIndex(
@@ -466,6 +586,26 @@ namespace OutdoorPlanner.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Comments_PostId",
+                table: "Comments",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_UserId",
+                table: "Comments",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CommentsAndPostViewModel_PostViewModelId",
+                table: "CommentsAndPostViewModel",
+                column: "PostViewModelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CommentViewModel_CommentsAndPostViewModelId",
+                table: "CommentViewModel",
+                column: "CommentsAndPostViewModelId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Events_UserId",
                 table: "Events",
                 column: "UserId");
@@ -479,6 +619,21 @@ namespace OutdoorPlanner.Migrations
                 name: "IX_Invitations_EventViewModelId",
                 table: "Invitations",
                 column: "EventViewModelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Likes_CommentId",
+                table: "Likes",
+                column: "CommentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Likes_PostId",
+                table: "Likes",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Likes_UserId",
+                table: "Likes",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PostCreateBindingModel_EventViewModelId",
@@ -535,10 +690,19 @@ namespace OutdoorPlanner.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "CommentCreateBindingModel");
+
+            migrationBuilder.DropTable(
+                name: "CommentViewModel");
+
+            migrationBuilder.DropTable(
                 name: "CreateInvitationBindingModel");
 
             migrationBuilder.DropTable(
                 name: "InvitationViewModel");
+
+            migrationBuilder.DropTable(
+                name: "Likes");
 
             migrationBuilder.DropTable(
                 name: "PostCreateBindingModel");
@@ -547,28 +711,34 @@ namespace OutdoorPlanner.Migrations
                 name: "PostEditBindingModel");
 
             migrationBuilder.DropTable(
-                name: "Posts");
-
-            migrationBuilder.DropTable(
-                name: "PostViewModel");
-
-            migrationBuilder.DropTable(
                 name: "UserInvitations");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "PostsEventViewModel");
+                name: "CommentsAndPostViewModel");
+
+            migrationBuilder.DropTable(
+                name: "Comments");
 
             migrationBuilder.DropTable(
                 name: "Invitations");
 
             migrationBuilder.DropTable(
-                name: "EventViewModel");
+                name: "PostViewModel");
+
+            migrationBuilder.DropTable(
+                name: "Posts");
+
+            migrationBuilder.DropTable(
+                name: "PostsEventViewModel");
 
             migrationBuilder.DropTable(
                 name: "Events");
+
+            migrationBuilder.DropTable(
+                name: "EventViewModel");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
