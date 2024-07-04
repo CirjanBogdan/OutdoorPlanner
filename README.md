@@ -3,6 +3,7 @@
 I developed an outdoor events app with user registration and event organization. Key features include:
 
 ✅ User registration and authentication
+
 ✅ Event creation and management
 ✅ Filtering and pagination for easy search
 ✅ Real-time weather updates via API
