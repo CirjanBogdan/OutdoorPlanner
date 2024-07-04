@@ -5,11 +5,17 @@ I developed an outdoor events app with user registration and event organization.
 ✅ User registration and authentication
 
 ✅ Event creation and management
+
 ✅ Filtering and pagination for easy search
+
 ✅ Real-time weather updates via API
+
 ✅ Invitation management for events
+
 ✅ Social posts on event pages
+
 ✅ Commenting on event posts
+
 ✅ Liking system for posts and comments
 
 ![Events](https://github.com/CirjanBogdan/OutdoorPlanner/assets/124176929/330ff2ca-98ef-4177-ab01-157c80ba3fce)
